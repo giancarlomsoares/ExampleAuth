@@ -1,0 +1,124 @@
+@page "{id:guid}"
+@model ExampleAuth.Server.Pages.Users.DetailsModel
+@{
+    ViewData["Title"] = "Detalhes do usuário";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+<div class="mb-6 flex items-center justify-between">
+    <h1 class="mb-0">@Model.Email</h1>
+    <a class="btn btn-secondary" href="/Users/Edit/@Model.Id" aria-label="Editar" title="Editar">
+        <partial name="_Icon" model="@("pencil")" />
+    </a>
+</div>
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <p class="error">@Model.ErrorMessage</p>
+}
+<div class="card">
+    <dl class="space-y-2 text-sm text-ink-secondary">
+        <div><dt class="inline font-medium text-ink-primary">Nome:</dt> <dd class="inline">@(Model.DisplayName ?? "-")</dd></div>
+        <div>
+            <dt class="inline font-medium text-ink-primary">Roles:</dt>
+            <dd class="inline">
+                @if (Model.Roles.Length > 0)
+                {
+                    @string.Join(", ", Model.Roles)
+                }
+                else
+                {
+                    <span class="badge-neutral">Usuário</span>
+                }
+            </dd>
+        </div>
+        <div>
+            <dt class="inline font-medium text-ink-primary">Status:</dt>
+            <dd class="inline">
+                @if (Model.IsDisabled)
+                {
+                    <span class="badge-danger">Desabilitado</span>
+                }
+                else
+                {
+                    <span class="badge-success">Ativo</span>
+                }
+            </dd>
+        </div>
+        <div>
+            <dt class="inline font-medium text-ink-primary">Email confirmado:</dt>
+            <dd class="inline">
+                @if (Model.EmailConfirmed)
+                {
+                    <span class="badge-success">Sim</span>
+                }
+                else
+                {
+                    <span class="badge-neutral">Não</span>
+                }
+            </dd>
+        </div>
+        <div><dt class="inline font-medium text-ink-primary">Criado em:</dt> <dd class="inline"><partial name="_LocalTime" model="@Model.CreatedAtUtc" /></dd></div>
+        <div><dt class="inline font-medium text-ink-primary">Criado por:</dt> <dd class="inline">@(Model.CreatedByEmail ?? "(sistema)")</dd></div>
+    </dl>
+
+    @if (!Model.EmailConfirmed)
+    {
+        <form method="post" asp-page-handler="ResendConfirmation" class="mt-6 border-t border-border pt-6">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <button class="btn btn-secondary" type="submit">Enviar email de confirmação</button>
+        </form>
+    }
+</div>
+
+<h1>Clients com acesso</h1>
+<div class="table-wrap">
+    <table class="table-modern">
+        <thead>
+            <tr>
+                <th>Client</th>
+                <th>Concedido por</th>
+                <th>Quando</th>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <th></th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var grant in Model.Grants)
+        {
+            <tr>
+                <td>@grant.DisplayName</td>
+                <td>@grant.GrantedByEmail</td>
+                <td><partial name="_LocalTime" model="@grant.GrantedAtUtc" /></td>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <td>
+                        <form method="post" asp-page-handler="Revoke" onsubmit="return confirm('Remover o acesso a este client?');" style="display:inline">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <input type="hidden" name="clientId" value="@grant.ClientId" />
+                            <button class="btn btn-danger" type="submit">Remover acesso</button>
+                        </form>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@if (User.IsInRole("Administrator"))
+{
+    <div class="card mt-6">
+        <form method="post" asp-page-handler="Grant">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <label class="label" for="clientId">Conceder acesso a</label>
+            <select class="input" id="clientId" name="clientId" required>
+                @foreach (var client in Model.AllClients)
+                {
+                    <option value="@client.ClientId">@client.DisplayName</option>
+                }
+            </select>
+            <button class="btn btn-primary" type="submit">Conceder acesso</button>
+        </form>
+    </div>
+}

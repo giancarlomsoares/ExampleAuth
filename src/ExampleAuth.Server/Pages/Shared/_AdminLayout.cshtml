@@ -1,0 +1,84 @@
+@{
+    var currentPath = Context.Request.Path.Value ?? "";
+    bool IsActive(string path) => currentPath.Equals(path, StringComparison.OrdinalIgnoreCase)
+        || currentPath.StartsWith(path + "/", StringComparison.OrdinalIgnoreCase);
+}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ExampleAuth - @ViewData["Title"]</title>
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<body class="h-screen overflow-hidden">
+    <div class="flex h-full">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 flex w-64 -translate-x-full flex-col border-r border-brand-blue/30 bg-surface transition-transform duration-200 lg:static lg:translate-x-0">
+            <div class="flex items-center gap-2 px-6 py-5">
+                <span class="text-lg font-bold tracking-tight text-ink-primary">Example<span class="text-brand-orange">Auth</span></span>
+            </div>
+            <nav class="flex-1 space-y-1 px-3">
+                <a href="/" class="sidebar-link @(currentPath == "/" ? "sidebar-link-active" : "")">
+                    <partial name="_Icon" model="@("home")" />
+                    Home
+                </a>
+                <a href="/Users" class="sidebar-link @(IsActive("/Users") ? "sidebar-link-active" : "")">
+                    <partial name="_Icon" model="@("users")" />
+                    Usuários
+                </a>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <a href="/Clients" class="sidebar-link @(IsActive("/Clients") ? "sidebar-link-active" : "")">
+                        <partial name="_Icon" model="@("apps")" />
+                        Clients OAuth
+                    </a>
+                }
+            </nav>
+            <div class="border-t border-border px-3 py-4">
+                <p class="mb-3 truncate px-3.5 text-xs text-ink-tertiary">@User.Identity?.Name</p>
+                <a href="/connect/logout" class="sidebar-link">
+                    <partial name="_Icon" model="@("logout")" />
+                    Sair
+                </a>
+            </div>
+        </aside>
+        <div id="sidebar-overlay" class="fixed inset-0 z-20 hidden bg-black/50 lg:hidden"></div>
+        <div class="flex flex-1 flex-col overflow-y-auto">
+            <header class="flex items-center gap-3 border-b border-border bg-surface px-4 py-3 lg:hidden">
+                <button id="sidebar-toggle" type="button" class="btn btn-secondary" aria-label="Abrir menu">
+                    <partial name="_Icon" model="@("menu")" />
+                </button>
+                <span class="text-sm font-semibold text-ink-primary">ExampleAuth</span>
+            </header>
+            <main class="flex-1 p-6 lg:p-10">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const toggle = document.getElementById('sidebar-toggle');
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
+
+        toggle.addEventListener('click', openSidebar);
+        overlay.addEventListener('click', closeSidebar);
+
+        document.querySelectorAll('time[datetime]').forEach(function (el) {
+            const date = new Date(el.getAttribute('datetime'));
+            if (isNaN(date.getTime())) return;
+            const pad = (n) => String(n).padStart(2, '0');
+            el.textContent = `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+        });
+    </script>
+</body>
+</html>

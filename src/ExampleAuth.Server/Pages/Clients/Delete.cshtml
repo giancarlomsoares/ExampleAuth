@@ -1,0 +1,34 @@
+@page "{clientId}"
+@model ExampleAuth.Server.Pages.Clients.DeleteModel
+@{
+    ViewData["Title"] = "Excluir client";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+<h1>Excluir client</h1>
+<div class="card">
+    <dl class="space-y-2 text-sm text-ink-secondary">
+        <div><dt class="inline font-medium text-ink-primary">Nome:</dt> <dd class="inline">@Model.DisplayName</dd></div>
+        <div><dt class="inline font-medium text-ink-primary">Client ID:</dt> <dd class="inline font-mono">@Model.ClientId</dd></div>
+        <div><dt class="inline font-medium text-ink-primary">Tipo:</dt> <dd class="inline">@Model.ClientType</dd></div>
+        <div><dt class="inline font-medium text-ink-primary">Redirect URIs:</dt> <dd class="inline">@string.Join(", ", Model.RedirectUris)</dd></div>
+        <div><dt class="inline font-medium text-ink-primary">Usuários vinculados:</dt> <dd class="inline">@Model.LinkedUserCount</dd></div>
+    </dl>
+</div>
+
+<div class="card border-danger/40 bg-danger-bg">
+    <div class="flex items-start gap-4">
+        <partial name="_Icon" model="@("alert-triangle")" />
+        <div>
+            <p class="mb-1 font-semibold text-danger-text">Esta ação não pode ser desfeita</p>
+            <p class="text-sm text-danger-text/90">
+                Excluir este client remove o cadastro dele no ExampleAuth e interrompe o acesso de
+                @Model.LinkedUserCount usuário(s) vinculado(s) imediatamente.
+            </p>
+        </div>
+    </div>
+    <form method="post" class="mt-4 flex justify-end gap-3">
+        @Html.AntiForgeryToken()
+        <a class="btn btn-secondary" href="/Clients/Details/@Model.ClientId">Cancelar</a>
+        <button class="btn btn-danger" type="submit">Excluir permanentemente</button>
+    </form>
+</div>

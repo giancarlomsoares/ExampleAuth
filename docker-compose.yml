@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: exampleauth-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: exampleauth
+    ports:
+      - "5432:5432"
+    volumes:
+      - exampleauth_pgdata:/var/lib/postgresql/data
+
+volumes:
+  exampleauth_pgdata:

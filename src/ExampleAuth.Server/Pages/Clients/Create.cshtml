@@ -1,0 +1,80 @@
+@page
+@model ExampleAuth.Server.Pages.Clients.CreateModel
+@{
+    ViewData["Title"] = "Novo client";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+<h1>Novo client OAuth</h1>
+@if (Model.Created)
+{
+    <div class="card">
+        <p class="mb-4 text-sm text-ink-secondary">Client criado com sucesso.</p>
+        @if (Model.GeneratedSecret is not null)
+        {
+            <p class="label">Client Secret</p>
+            <p class="mb-1 break-all rounded-lg border border-border bg-canvas px-3 py-2 font-mono text-sm text-ink-primary">@Model.GeneratedSecret</p>
+            <p class="mb-4 text-xs text-ink-tertiary">Copie agora — este secret não será mostrado novamente.</p>
+        }
+        <a class="btn btn-primary" href="/Clients/Details/@Model.CreatedClientId">Ver detalhes do client</a>
+    </div>
+}
+else
+{
+    <div class="card">
+        <form method="post">
+            @Html.AntiForgeryToken()
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <p class="error">@Model.ErrorMessage</p>
+            }
+            <label class="label" asp-for="DisplayName">Nome de exibição</label>
+            <input class="input" asp-for="DisplayName" required autofocus />
+
+            <p class="label">Tipo de client</p>
+            <label class="mb-2 flex items-start gap-2 text-sm text-ink-secondary">
+                <input class="mt-1 size-4 accent-brand-orange" type="radio" asp-for="Kind" value="Spa" />
+                <span><strong class="text-ink-primary">Aplicação front-end (SPA / mobile)</strong> — client público, sem secret. Login de usuários via Authorization Code + PKCE.</span>
+            </label>
+            <label class="mb-2 flex items-start gap-2 text-sm text-ink-secondary">
+                <input class="mt-1 size-4 accent-brand-orange" type="radio" asp-for="Kind" value="Web" />
+                <span><strong class="text-ink-primary">Aplicação web com backend (Razor / MVC / etc.)</strong> — client confidencial com Client Secret, guardado no servidor da aplicação. Login de usuários via Authorization Code + PKCE.</span>
+            </label>
+            <label class="mb-4 flex items-start gap-2 text-sm text-ink-secondary">
+                <input class="mt-1 size-4 accent-brand-orange" type="radio" asp-for="Kind" value="Machine" />
+                <span><strong class="text-ink-primary">Integração M2M (servidor-a-servidor)</strong> — client confidencial com Client Secret. Sem usuário e sem redirect: usa client_id + secret para obter um token (client_credentials).</span>
+            </label>
+
+            <div id="spa-fields">
+                <label class="label" asp-for="RedirectUris">Redirect URIs (uma por linha)</label>
+                <textarea class="input" asp-for="RedirectUris" rows="4"></textarea>
+            </div>
+
+            <div id="machine-fields" hidden>
+                <label class="flex items-center gap-2 text-sm text-ink-secondary" asp-for="AllowUserManagement">
+                    <input class="size-4 accent-brand-orange" type="checkbox" asp-for="AllowUserManagement" />
+                    Permitir que este client gerencie seus próprios usuários via API (scope users.manage)
+                </label>
+            </div>
+
+            <button class="btn btn-primary mt-4" type="submit">Criar</button>
+        </form>
+    </div>
+}
+
+<script>
+    (function () {
+        const radios = document.querySelectorAll('input[name="Kind"]');
+        const spa = document.getElementById('spa-fields');
+        const machine = document.getElementById('machine-fields');
+        if (!spa || !machine) return;
+        function sync() {
+            const isMachine = document.querySelector('input[name="Kind"]:checked')?.value === 'Machine';
+            spa.hidden = isMachine;
+            machine.hidden = !isMachine;
+            spa.querySelector('textarea').disabled = isMachine;
+            machine.querySelector('input[type="checkbox"]').disabled = !isMachine;
+        }
+        radios.forEach(r => r.addEventListener('change', sync));
+        sync();
+    })();
+</script>

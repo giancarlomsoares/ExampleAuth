@@ -1,0 +1,45 @@
+@page
+@model ExampleAuth.Server.Pages.Clients.IndexModel
+@{
+    ViewData["Title"] = "Clients OAuth";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+<div class="mb-6 flex items-center justify-between">
+    <h1 class="mb-0">Clients OAuth</h1>
+    <a class="btn btn-primary" href="/Clients/Create">
+        <partial name="_Icon" model="@("plus")" />
+        Novo client
+    </a>
+</div>
+<div class="table-wrap">
+    <table class="table-modern">
+        <thead>
+            <tr>
+                <th>Client ID</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Redirect URIs</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var client in Model.Clients)
+        {
+            <tr>
+                <td class="font-mono text-xs text-ink-secondary">@client.ClientId</td>
+                <td>@client.DisplayName</td>
+                <td>@client.ClientType</td>
+                <td class="max-w-xs truncate">@string.Join(", ", client.RedirectUris)</td>
+                <td class="whitespace-nowrap">
+                    <a class="btn btn-secondary" href="/Clients/Details/@client.ClientId" aria-label="Detalhes" title="Detalhes">
+                        <partial name="_Icon" model="@("eye")" />
+                    </a>
+                    <a class="btn btn-danger" href="/Clients/Delete/@client.ClientId" aria-label="Excluir" title="Excluir">
+                        <partial name="_Icon" model="@("trash")" />
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

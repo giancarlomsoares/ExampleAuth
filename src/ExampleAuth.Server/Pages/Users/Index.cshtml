@@ -1,0 +1,80 @@
+@page
+@model ExampleAuth.Server.Pages.Users.IndexModel
+@{
+    ViewData["Title"] = "Usuários";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+<div class="mb-6 flex items-center justify-between">
+    <h1 class="mb-0">Usuários</h1>
+    <a class="btn btn-primary" href="/Users/Create">
+        <partial name="_Icon" model="@("plus")" />
+        Novo usuário
+    </a>
+</div>
+<div class="table-wrap">
+    <table class="table-modern">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Nome</th>
+                <th>Roles</th>
+                <th>Email confirmado</th>
+                <th>Status</th>
+                <th>Criado em</th>
+                <th>Criado por</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>@user.DisplayName</td>
+                <td>
+                    <div class="flex flex-wrap gap-1">
+                        @if (user.Roles.Length > 0)
+                        {
+                            @foreach (var role in user.Roles)
+                            {
+                                <span class="badge-neutral">@role</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="badge-neutral">Usuário</span>
+                        }
+                    </div>
+                </td>
+                <td>
+                    @if (user.EmailConfirmed)
+                    {
+                        <span class="badge-success">Sim</span>
+                    }
+                    else
+                    {
+                        <span class="badge-neutral">Não</span>
+                    }
+                </td>
+                <td>
+                    @if (user.Locked)
+                    {
+                        <span class="badge-danger">Bloqueado</span>
+                    }
+                    else
+                    {
+                        <span class="badge-success">Ativo</span>
+                    }
+                </td>
+                <td><partial name="_LocalTime" model="@user.CreatedAtUtc" /></td>
+                <td>@(user.CreatedByEmail ?? "(sistema)")</td>
+                <td>
+                    <a class="btn btn-secondary" href="/Users/Details/@user.Id" aria-label="Detalhes" title="Detalhes">
+                        <partial name="_Icon" model="@("eye")" />
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,17 @@
+@page
+@model ExampleAuth.Server.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+<h1>Painel ExampleAuth</h1>
+<div class="grid gap-4 sm:grid-cols-2">
+    <div class="card">
+        <p class="label">Usuários cadastrados</p>
+        <p class="text-3xl font-bold tracking-tight text-ink-primary">@Model.UserCount</p>
+    </div>
+    <div class="card">
+        <p class="label">Clients OAuth registrados</p>
+        <p class="text-3xl font-bold tracking-tight text-ink-primary">@Model.ClientCount</p>
+    </div>
+</div>

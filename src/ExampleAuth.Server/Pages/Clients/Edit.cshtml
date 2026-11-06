@@ -1,0 +1,28 @@
+@page "{clientId}"
+@model ExampleAuth.Server.Pages.Clients.EditModel
+@{
+    ViewData["Title"] = "Editar client";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+<h1>Editar client</h1>
+<div class="card">
+    <form method="post">
+        @Html.AntiForgeryToken()
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <p class="error">@Model.ErrorMessage</p>
+        }
+        <label class="label" asp-for="DisplayName">Nome de exibição</label>
+        <input class="input" asp-for="DisplayName" required autofocus />
+
+        <label class="label" asp-for="RedirectUris">Redirect URIs (uma por linha)</label>
+        <textarea class="input" asp-for="RedirectUris" rows="4" required></textarea>
+
+        <label class="flex items-center gap-2 text-sm text-ink-secondary" asp-for="AllowUserManagement">
+            <input class="size-4 accent-brand-orange" type="checkbox" asp-for="AllowUserManagement" />
+            Permitir que este client gerencie seus próprios usuários via API (scope users.manage)
+        </label>
+
+        <button class="btn btn-primary mt-4" type="submit">Salvar</button>
+    </form>
+</div>

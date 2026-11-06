@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-canvas text-ink-primary font-sans antialiased;
+  }
+  h1 {
+    @apply mb-6 text-xl font-bold tracking-tight text-ink-primary;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-brand-orange text-canvas hover:bg-brand-orange-bright active:bg-brand-orange-dim;
+  }
+  .btn-secondary {
+    @apply border border-border bg-surface-raised text-ink-primary hover:border-border-strong;
+  }
+  .btn-danger {
+    @apply bg-danger text-white hover:bg-danger/90;
+  }
+
+  .card {
+    @apply mb-6 rounded-xl border border-border bg-surface p-6 shadow-lg shadow-black/20;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  .badge-success {
+    @apply badge bg-success-bg text-success-text;
+  }
+  .badge-danger {
+    @apply badge bg-danger-bg text-danger-text;
+  }
+  .badge-neutral {
+    @apply badge bg-surface-raised text-ink-secondary;
+  }
+
+  .table-wrap {
+    @apply overflow-x-auto rounded-xl border border-border bg-surface;
+  }
+  .table-modern {
+    @apply w-full border-collapse text-sm;
+  }
+  .table-modern thead {
+    @apply bg-surface-raised;
+  }
+  .table-modern th {
+    @apply px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-ink-secondary;
+  }
+  .table-modern td {
+    @apply border-t border-border px-4 py-3 text-ink-primary;
+  }
+  .table-modern tbody tr {
+    @apply transition-colors hover:bg-surface-raised;
+  }
+
+  .label {
+    @apply mb-1 block text-sm font-medium text-ink-secondary;
+  }
+  .input {
+    @apply mb-4 w-full rounded-lg border border-border bg-canvas px-3 py-2 text-ink-primary placeholder:text-ink-tertiary focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange;
+  }
+  .hint {
+    @apply -mt-3 mb-4 text-xs text-ink-tertiary;
+  }
+  .error {
+    @apply mb-4 rounded-lg bg-danger-bg px-3 py-2 text-sm text-danger-text;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-raised hover:text-ink-primary;
+  }
+  .sidebar-link-active {
+    @apply relative bg-surface-raised text-ink-primary;
+  }
+  .sidebar-link-active::before {
+    content: '';
+    position: absolute;
+    left: -0.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background-color: theme('colors.brand.orange');
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  }
+
+  .auth-card {
+    @apply w-full max-w-sm rounded-2xl border border-border bg-surface p-8 shadow-2xl shadow-black/30;
+  }
+}

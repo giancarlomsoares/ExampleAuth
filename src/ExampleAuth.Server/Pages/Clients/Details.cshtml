@@ -1,0 +1,68 @@
+@page "{clientId}"
+@model ExampleAuth.Server.Pages.Clients.DetailsModel
+@{
+    ViewData["Title"] = "Detalhes do client";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+<div class="mb-6 flex items-center justify-between">
+    <h1 class="mb-0">@Model.DisplayName</h1>
+    <a class="btn btn-secondary" href="/Clients/Edit/@Model.ClientId" aria-label="Editar" title="Editar">
+        <partial name="_Icon" model="@("pencil")" />
+    </a>
+</div>
+<div class="card">
+    <dl class="space-y-2 text-sm text-ink-secondary">
+        <div><dt class="inline font-medium text-ink-primary">Client ID:</dt> <dd class="inline font-mono">@Model.ClientId</dd></div>
+        <div><dt class="inline font-medium text-ink-primary">Tipo:</dt> <dd class="inline">@Model.ClientType</dd></div>
+        <div><dt class="inline font-medium text-ink-primary">Redirect URIs:</dt> <dd class="inline">@string.Join(", ", Model.RedirectUris)</dd></div>
+    </dl>
+</div>
+
+<h1>Usuários com acesso</h1>
+<div class="table-wrap">
+    <table class="table-modern">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Concedido por</th>
+                <th>Quando</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var grant in Model.Grants)
+        {
+            <tr>
+                <td>@grant.Email</td>
+                <td>@grant.GrantedByEmail</td>
+                <td><partial name="_LocalTime" model="@grant.GrantedAtUtc" /></td>
+                <td>
+                    <form method="post" asp-page-handler="Revoke" onsubmit="return confirm('Remover o acesso deste usuário?');" style="display:inline">
+                        <input type="hidden" name="clientId" value="@Model.ClientId" />
+                        <input type="hidden" name="userId" value="@grant.UserId" />
+                        <button class="btn btn-danger" type="submit">Remover acesso</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<div class="card mt-6">
+    <form method="post" asp-page-handler="Grant">
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <p class="error">@Model.ErrorMessage</p>
+        }
+        <input type="hidden" name="clientId" value="@Model.ClientId" />
+        <label class="label" for="userId">Conceder acesso a</label>
+        <select class="input" id="userId" name="userId" required>
+            @foreach (var user in Model.AllUsers)
+            {
+                <option value="@user.Id">@user.Email</option>
+            }
+        </select>
+        <button class="btn btn-primary" type="submit">Conceder acesso</button>
+    </form>
+</div>

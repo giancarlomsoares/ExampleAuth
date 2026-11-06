@@ -1,0 +1,47 @@
+@page
+@model ExampleAuth.Server.Pages.Users.CreateModel
+@{
+    ViewData["Title"] = "Novo usuário";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+<h1>Novo usuário</h1>
+<div class="card">
+    <form method="post">
+        @Html.AntiForgeryToken()
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <p class="error">@Model.ErrorMessage</p>
+        }
+        <label class="label" asp-for="Email">Email</label>
+        <input class="input" asp-for="Email" type="email" required autofocus />
+
+        <label class="label" asp-for="Password">Senha</label>
+        <input class="input" asp-for="Password" type="password" required />
+
+        <label class="label" asp-for="DisplayName">Nome</label>
+        <input class="input" asp-for="DisplayName" />
+
+        @if (User.IsInRole("Administrator"))
+        {
+            <label class="label" asp-for="SelectedRole">Role</label>
+            <select class="input" asp-for="SelectedRole">
+                <option value="None">Usuário</option>
+                <option value="Support">Suporte</option>
+                <option value="Administrator">Administrador</option>
+            </select>
+
+            <label class="label">Clients com acesso</label>
+            <div class="mb-4 space-y-2">
+                @foreach (var client in Model.AllClients)
+                {
+                    <label class="flex items-center gap-2 text-sm text-ink-secondary">
+                        <input class="size-4 accent-brand-orange" type="checkbox" name="ClientIds" value="@client.ClientId" />
+                        @(client.DisplayName ?? client.ClientId)
+                    </label>
+                }
+            </div>
+        }
+
+        <button class="btn btn-primary" type="submit">Criar</button>
+    </form>
+</div>

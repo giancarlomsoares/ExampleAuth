@@ -1,0 +1,27 @@
+@page
+@model ExampleAuth.Server.Pages.Account.ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirmação de email";
+    Layout = "/Pages/Shared/_AuthLayout.cshtml";
+}
+<div class="mb-6 flex justify-center">
+    <partial name="_Icon" model="@(Model.Status == ExampleAuth.Server.Pages.Account.ConfirmEmailStatus.InvalidLink ? "x-circle" : "check-circle")" />
+</div>
+@switch (Model.Status)
+{
+    case ExampleAuth.Server.Pages.Account.ConfirmEmailStatus.Confirmed:
+        <h1 class="mb-4 text-center text-xl font-bold tracking-tight text-ink-primary">Email confirmado</h1>
+        <p class="mb-6 text-center text-sm text-ink-secondary">Seu email foi confirmado com sucesso.</p>
+        break;
+    case ExampleAuth.Server.Pages.Account.ConfirmEmailStatus.AlreadyConfirmed:
+        <h1 class="mb-4 text-center text-xl font-bold tracking-tight text-ink-primary">Email já confirmado</h1>
+        <p class="mb-6 text-center text-sm text-ink-secondary">Este email já havia sido confirmado anteriormente.</p>
+        break;
+    default:
+        <h1 class="mb-4 text-center text-xl font-bold tracking-tight text-ink-primary">Link inválido</h1>
+        <p class="mb-6 text-center text-sm text-ink-secondary">Este link de confirmação é inválido ou expirou. Peça a um administrador para reenviar o email de confirmação.</p>
+        break;
+}
+<p class="text-center text-sm">
+    <a class="text-brand-blue-bright hover:underline" href="/Account/Login">Ir para o login</a>
+</p>

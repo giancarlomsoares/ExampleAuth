@@ -1,0 +1,25 @@
+@page
+@model ExampleAuth.Server.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "/Pages/Shared/_AuthLayout.cshtml";
+}
+<div class="mb-6 flex justify-center">
+    <partial name="_Icon" model="@("key")" />
+</div>
+<h1 class="mb-6 text-center text-xl font-bold tracking-tight text-ink-primary">Entrar</h1>
+<form method="post">
+    @Html.AntiForgeryToken()
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <p class="error">@Model.ErrorMessage</p>
+    }
+    <label class="label" for="Email">E-mail</label>
+    <input class="input" type="email" id="Email" name="Email" value="@Model.Email" required autofocus />
+    <label class="label" for="Password">Senha</label>
+    <input class="input" type="password" id="Password" name="Password" required />
+    <button class="btn btn-primary w-full justify-center" type="submit">Entrar</button>
+    <p class="mt-4 text-center text-sm">
+        <a class="text-brand-blue-bright hover:underline" href="/Account/ForgotPassword">Esqueci minha senha</a>
+    </p>
+</form>

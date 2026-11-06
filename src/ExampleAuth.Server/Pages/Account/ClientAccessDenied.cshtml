@@ -1,0 +1,14 @@
+@page
+@model ExampleAuth.Server.Pages.Account.ClientAccessDeniedModel
+@{
+    ViewData["Title"] = "Acesso negado";
+    Layout = "/Pages/Shared/_AuthLayout.cshtml";
+}
+<div class="mb-6 flex justify-center">
+    <partial name="_Icon" model="@("x-circle")" />
+</div>
+<h1 class="mb-4 text-center text-xl font-bold tracking-tight text-ink-primary">Acesso negado</h1>
+<p class="mb-6 text-center text-sm text-ink-secondary">Sua conta não tem acesso ao sistema <strong class="text-ink-primary">@Model.ClientDisplayName</strong>. Fale com o administrador.</p>
+<p class="text-center text-sm">
+    <a class="text-brand-blue-bright hover:underline" href="/connect/logout">Sair</a>
+</p>
